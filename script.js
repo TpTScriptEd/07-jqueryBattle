@@ -123,6 +123,17 @@ function update () {
 
   // TODO: Collision detection & health adjustment
 
+  for(var i = 0; i < Bullets.length; i++) {
+  	var bullet = bullets[i];
+  	for(var j = 0; j < enemies; j++) {
+  		var enemy = enemies[j];
+  		if(isColliding(bullet, enemy)) {
+  			enemy.health--;
+  			bullet.health--;
+  		}
+  	}
+  }
+
 
   // Player bounds checking
   if (player.position.x < 0) {
@@ -151,10 +162,37 @@ function update () {
   }
 
   // TODO: Lose condition (i.e. if player is dead)
+  if(!cfg.isGameOver && player.health <= 0) {
+  	player.element.remove();
+  	cfg.isGameOver = true;
+  	alert("Game Over!")
+  }
 
   // TODO: Win condition (i.e. if all enemies are dead)
+  if(!cfg.isGameOver && enemies.length === 0) {
+  	cfg.isGameOver = true;
+  	alert("You win!");
+  }
 }
 
+function isColliding (e1, e2){
+  var e1left = e1.position.x - e1.width/2;
+  var e1right = e1.position.x + e1.width/2;
+  var e1top = e1.position.y + e1.height/2;
+  var e1bottom = e1.position.y - e1.height/2;
+  
+  var e2left = e2.position.x - e2.width/2;
+  var e2right = e2.position.x + e2.width/2;
+  var e2top = e2.position.y + e2.height/2;
+  var e2bottom = e2.position.y - e2.height/2;
+  
+  return !(
+    e1bottom > e2top ||
+    e1top < e2bottom ||
+    e1left > e2right ||
+    e1right < e2left
+  )
+};
 // Enemy attack movement
 function runEnemyAI (enemies) {
   var attackingEnemy;
@@ -199,6 +237,10 @@ function draw () {
     });
   });
 }
+
+
+
+
 
 
 // Input handling
